@@ -3,11 +3,8 @@ program fractWS
 
 
  use mod_math, only: ws, fdo, setNodesAndWeights, getInitialGuessNodes, &
-                     dataFinDiffF50, dataFinDiffF100
+                     dataFinDiffF, deriv, quadrature
  implicit none
- !integer, parameter ::  wp = selected_real_kind(15,307)
- !integer, parameter ::  wp = selected_real_kind(33,4931)
- 
 
  integer :: i
 
@@ -30,7 +27,9 @@ program fractWS
 
  integer    , parameter :: n = 50
  real(wp)   , parameter :: x = 4.9_wp
- real(wp)    :: ysingle(n)
+ 
+ type (quadrature) :: qGL
+
  
  
 ! generate values
@@ -58,11 +57,12 @@ do i = 1, imax
 end do  
 !100 format (1x,2(1x,E60.33)) 
 !print *, getInitialGuessNodes(alpha)
-ysingle =  setNodesAndWeights( alpha )
-print *, ysingle
-print *, sum(ysingle)
+qGL =  setNodesAndWeights( alpha )
+  
+print *, qGL
+print *, sum(qGL%nodes* qGL%weights)
 !close(1) 
  
-print *,  sum(dataFinDiffF50)
-print *,  sum(dataFinDiffF100)
+print *,  sum(dataFinDiffF)
+print *,  deriv(1.0_wp)  - exp(1.0_wp)
 end program fractWS
