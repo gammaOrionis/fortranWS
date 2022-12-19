@@ -3,7 +3,7 @@ program fractWS
 
 !
  use mod_math, only: ws, fdo, setNodesAndWeights, getInitialGuessNodes, &
-                     dataFinDiffF, deriv, quadrature
+                     dataFinDiffF, deriv, quadrature, integrate
  implicit none
 
  integer :: i
@@ -29,6 +29,8 @@ program fractWS
  real(wp)   , parameter :: x = 4.9_wp
  
  type (quadrature) :: qGL
+
+ real(wp) :: result(2)
 
  
  
@@ -57,10 +59,15 @@ do i = 1, imax
 end do  
 !100 format (1x,2(1x,E60.33)) 
 !print *, getInitialGuessNodes(alpha)
+
+! qGL contains alpha, n, nodes, weights
 qGL =  setNodesAndWeights( alpha )
+result = integrate([1.0_wp,1.0_wp], qGL)
   
 print *, qGL
 print *, sum(qGL%nodes* qGL%weights)
+print *, result
+
 !close(1) 
  
 print *,  sum(dataFinDiffF)
