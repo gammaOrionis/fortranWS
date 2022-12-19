@@ -121,6 +121,8 @@ module mod_math
     integer              :: i               ! index 
    
     type ( quadrature ) :: qGL
+
+    if(qGL%alpha .eq. alpha) return
    
     !! linear interpolation guess
     nodes = getInitialGuessNodes( alpha );
@@ -270,5 +272,23 @@ module mod_math
     yreal( 1:i ) =  a0**alpha * W * exp( -kreal * x(1:i) ) * real( factor * exp( m * x(1:i) ) )
 
   end function fdo
+
+
+  pure function integrate( x , qGL) result( y )
+
+    real(wp), intent(in) :: x(:)
+    type ( quadrature ), intent(in) :: qGL
+   
+    real(wp) :: y(size(x))
+  
+    integer :: i
+
+    i = size(x)
+
+    y( 1:i ) =  qGL%alpha
+    
+   
+  end function integrate
+
 
 end module mod_math
