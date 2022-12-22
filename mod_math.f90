@@ -5,7 +5,8 @@ module mod_math
 
   integer, parameter   :: nGL = 50        ! LaguerreL order n,  here fixed to 50
   integer, parameter   :: imax = 6        ! newton raphson iterations  4 -> error 10^-13 real64
-  !                                                                    6 -> error 10^-33 real128 
+
+  real(wp), parameter :: pi = 3.14159265358979323846264338327950288419716939937510_wp
 
   type quadrature
     real(wp)                      :: alpha
@@ -274,7 +275,7 @@ module mod_math
   end function fdo
 
 
-  pure function integrate( x , qGL) result( y )
+  pure function integrateSin( x , qGL) result( y )
 
     real(wp), intent(in) :: x(:)
     type ( quadrature ), intent(in) :: qGL
@@ -283,12 +284,30 @@ module mod_math
   
     integer :: i
 
-    i = size(x)
-
-    y( 1:i ) =  qGL%alpha* x(1:i)
+    ! y[a_, x_] =  NIntegrate[w[h] Exp[-h] f[h+x],{h,0,Infinity}]
+    ! with f[x_] = Sin[x]
     
-   
-  end function integrate
+    do concurrent (i = 1 : size(x))   ! iterate all x-positions
+      y(i) =  sum( qGL%weights * sin( qGL%nodes + x(i) ))
+    end do   
 
+  end function integrateSin
 
+  pure function testExactSin( x , qGL) result( y )
+
+  real(wp), intent(in) :: x(:)
+  type ( quadrature ), intent(in) :: qGL
+ 
+  real(wp) :: y(size(x))
+  
+  integer :: i
+  i = size(x)
+
+  ! y[a_, x_] =  Integrate[w[h] Exp[-h] f[h+x],{h,0,Infinity}]
+ 
+  y(1:i) = 2._wp**(0.5_wp*(-1.0_wp - qGL%alpha)) *  & 
+    Cos(0.25_wp *(pi - qGL%alpha *  pi - 4* x(1:i))) * gamma(1.0_wp + qGL%alpha)
+    
+  
+end function testExactSin
 end module mod_math

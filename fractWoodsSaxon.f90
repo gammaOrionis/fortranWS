@@ -3,7 +3,7 @@ program fractWS
 
 !
  use mod_math, only: ws, fdo, setNodesAndWeights, getInitialGuessNodes, &
-                     dataFinDiffF, deriv, quadrature, integrate
+                     dataFinDiffF, deriv, quadrature, integrateSin, testExactSin
  implicit none
 
  integer :: i
@@ -31,6 +31,7 @@ program fractWS
  type (quadrature) :: qGL
 
  real(wp) :: result(imax)
+ real(wp) :: exact(imax)
 
  
  
@@ -58,15 +59,16 @@ program fractWS
 
 ! qGL contains alpha, n, nodes, weights
 qGL =  setNodesAndWeights( alpha )
-result = integrate( position, qGL )
+result = integrateSin( position, qGL )
+exact = testExactSin( position , qGL)
   
 !print *, qGL
 !print *, sum(qGL%nodes* qGL%weights)
 do i = 1, imax
-    print 100, position(i), result(i)
+    print 100, position(i), result(i), result(i)-exact(i)
     ! write(1,100) position(i), y(i)
 end do  
-100 format (1x,2(1x,E60.33)) 
+100 format (1x,3(1x,E44.33)) 
 
 
 !close(1) 
