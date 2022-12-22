@@ -295,19 +295,19 @@ module mod_math
 
   pure function testExactSin( x , qGL) result( y )
 
-  real(wp), intent(in) :: x(:)
-  type ( quadrature ), intent(in) :: qGL
- 
-  real(wp) :: y(size(x))
+    real(wp), intent(in) :: x(:)
+    type ( quadrature ), intent(in) :: qGL
   
-  integer :: i
-  i = size(x)
-
-  ! y[a_, x_] =  Integrate[w[h] Exp[-h] f[h+x],{h,0,Infinity}]
- 
-  y(1:i) = 2._wp**(0.5_wp*(-1.0_wp - qGL%alpha)) *  & 
-    Cos(0.25_wp *(pi - qGL%alpha *  pi - 4* x(1:i))) * gamma(1.0_wp + qGL%alpha)
+    real(wp) :: y(size(x))
     
+    integer :: i
+    i = size(x)
+
+    ! y[a_, x_] =  Integrate[w[h] Exp[-h] f[h+x],{h,0,Infinity}]
   
-end function testExactSin
+    y(1:i) = 2._wp**(0.5_wp*(-1.0_wp - qGL%alpha)) *  & 
+      Cos(0.25_wp *(pi - qGL%alpha *  pi - 4* x(1:i))) * gamma(1.0_wp + qGL%alpha)
+  
+  end function testExactSin
+  
 end module mod_math
