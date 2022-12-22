@@ -285,7 +285,7 @@ module mod_math
 
     i = size(x)
 
-    y( 1:i ) =  qGL%alpha
+    y( 1:i ) =  qGL%alpha* x(1:i)
     
    
   end function integrate

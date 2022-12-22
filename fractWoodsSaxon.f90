@@ -30,7 +30,7 @@ program fractWS
  
  type (quadrature) :: qGL
 
- real(wp) :: result(2)
+ real(wp) :: result(imax)
 
  
  
@@ -53,23 +53,24 @@ program fractWS
 
 !open(1, file = 'data1.txt', status = 'old')  
 
-do i = 1, imax
- ! print 100, position(i), y(i)
- ! write(1,100) position(i), y(i)
-end do  
-!100 format (1x,2(1x,E60.33)) 
+
 !print *, getInitialGuessNodes(alpha)
 
 ! qGL contains alpha, n, nodes, weights
 qGL =  setNodesAndWeights( alpha )
-result = integrate([1.0_wp,1.0_wp], qGL)
+result = integrate( position, qGL )
   
-print *, qGL
-print *, sum(qGL%nodes* qGL%weights)
-print *, result
+!print *, qGL
+!print *, sum(qGL%nodes* qGL%weights)
+do i = 1, imax
+    print 100, position(i), result(i)
+    ! write(1,100) position(i), y(i)
+end do  
+100 format (1x,2(1x,E60.33)) 
+
 
 !close(1) 
  
-print *,  sum(dataFinDiffF)
-print *,  deriv(1.0_wp)  - exp(1.0_wp)
+!print *,  sum(dataFinDiffF)
+!print *,  deriv(1.0_wp)  - exp(1.0_wp)
 end program fractWS
