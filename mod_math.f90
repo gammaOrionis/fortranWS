@@ -291,22 +291,18 @@ module mod_math
 
   end function fdo
 
-  pure function integrateWS( x , qGL, pWS) result( y )
-    type ( paramsWS ) , intent(in) :: pWS
+  pure elemental function integrateWS( x , qGL, pWS) result( y )
+    type ( paramsWS )  , intent(in) :: pWS
     type ( quadrature ), intent(in) :: qGL
-    real(wp), intent(in) :: x(:)
+    real(wp), intent(in) :: x
         
-    real(wp) :: y(size(x))
-  
-    integer :: i
-
-    ! y[a_, x_] =  NIntegrate[w[h] Exp[-h] Exp[+h] f[h+x],{h,0,Infinity}]
-    ! with f[x_] = Sin[x]
+    real(wp) :: y
     
-    do concurrent (i = 1 : size(x))   ! iterate all x-positions
-      y(i) =  sum( qGL%weights *  ws( qGL%nodes + x(i) , pWS) * exp(qGL%nodes))
-    end do   
-
+    ! y[a_, x_] =  NIntegrate[w[h] Exp[-h] Exp[+h] f[h+x],{h,0,Infinity}]
+    ! with f[x_] = ws[x]
+    
+    y =  sum( qGL%weights *  ws( qGL%nodes + x , pWS) * exp(qGL%nodes))
+  
   end function integrateWS
 
 
