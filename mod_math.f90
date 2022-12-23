@@ -300,11 +300,11 @@ module mod_math
   
     integer :: i
 
-    ! y[a_, x_] =  NIntegrate[w[h] Exp[-h] f[h+x],{h,0,Infinity}]
+    ! y[a_, x_] =  NIntegrate[w[h] Exp[-h] Exp[+h] f[h+x],{h,0,Infinity}]
     ! with f[x_] = Sin[x]
     
     do concurrent (i = 1 : size(x))   ! iterate all x-positions
-      y(i) =  sum( qGL%weights * ws( qGL%nodes + x(i) , pWS))
+      y(i) =  sum( qGL%weights *  ws( qGL%nodes + x(i) , pWS) * exp(qGL%nodes))
     end do   
 
   end function integrateWS

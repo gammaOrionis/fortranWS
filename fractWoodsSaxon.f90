@@ -61,20 +61,22 @@ program fractWS
 
 ! qGL contains alpha, n, nodes, weights
 qGL =  setNodesAndWeights( alpha )
-result = integrateSin( position, qGL )
-exact = testExactSin( position , qGL)
+!result = integrateSin( position, qGL )
+!exact = testExactSin( position , qGL)
   
 !print *, qGL
 !print *, sum(qGL%nodes* qGL%weights)
 do i = 1, imax
-    print 100, position(i), result(i), result(i)-exact(i)
+    ! print 100, position(i), result(i), result(i)-exact(i)
     ! write(1,100) position(i), y(i)
 end do  
 100 format (1x,3(1x,E44.33)) 
 
+
+
 result = integrateWS( position, qGL, setParmsWS(W, R0, a0) )
 do i = 1, imax
-    print 100, position(i), result(i), result(i)-exact(i)
+    print 100, position(i), result(i), a0
     ! write(1,100) position(i), y(i)
 end do  
 
