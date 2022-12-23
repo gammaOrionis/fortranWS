@@ -10,10 +10,8 @@ program fractWS
  integer :: i
 
  integer, parameter :: imax = 146
-
  
  real(wp), dimension(imax) :: position
- 
 
  real(wp)   , parameter :: step = 0.1_wp
  real(wp)   , parameter :: dummy = 1.0E-11_wp
@@ -25,7 +23,6 @@ program fractWS
  real(wp)   , parameter :: R0 = 6.8_wp
  real(wp)   , parameter :: k = 1.0_wp
  real(wp)   , parameter :: m = 2.0_wp
- 
 
  integer    , parameter :: n = 50
  real(wp)   , parameter :: x = 4.9_wp
@@ -34,8 +31,6 @@ program fractWS
 
  real(wp) :: result(imax)
  real(wp) :: exact(imax)
-
- 
  
 ! generate values
  do concurrent (i = 1 : imax)
@@ -51,27 +46,23 @@ program fractWS
 
 !print *, getInitialGuessNodes(alpha)
 
- 120 format (1x,2(1x,E44.33)) 
- 130 format (1x,3(1x,E44.33)) 
+120 format (1x,2(1x,E44.33)) 
+130 format (1x,3(1x,E44.33)) 
  
 
 ! qGL contains alpha, n, nodes, weights
-qGL =  setNodesAndWeights( alpha )
+qGL    =  setNodesAndWeights( alpha )
+
+! test tempered sine
 result = integrateSin( position, qGL )
-exact = testExactSin( position , qGL)
+exact  = testExactSin( position , qGL)
   
-do i = 1, imax
-    print 130, position(i), result(i), result(i)-exact(i)
+print 130, position, result, result-exact
     ! write(1,100) position(i), y(i)
-end do  
 
 ! now do the job for Woods-Saxon
 result = integrateWS( position, qGL, setParmsWS(W, R0, a0) )
-do i = 1, imax
-    print 120, position(i), result(i)
-    ! write(1,100) position(i), y(i)
-end do  
-
+print 120, position, result
 
 !close(1) 
  
