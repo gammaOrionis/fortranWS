@@ -137,7 +137,7 @@ module mod_math
     !! linear interpolation guess
     nodes = getInitialGuessNodes( alpha );
     
-    !! newton raphson iteration
+    !! newton raphson iteration to get node-accuracy
     do i = 1, imax
       nodes = iterateNodes(n, alpha, nodes)
     end do
@@ -145,26 +145,23 @@ module mod_math
     !! get weights
     weights = getWeights(n, alpha, nodes)
 
-    !! get exp.nodes
+    !! finally get expNodes and finish
     
-    qGL = quadrature(alpha, n, nodes, weights, exp(nodes))
+    qGL = quadrature( alpha, n, nodes, weights, exp(nodes) )
     
   end function setNodesAndWeights
 
 
   pure function getInitialGuessNodes( alpha ) result( x )
-  ! purpose : approximate nodes for L[n, alpha, x_i] === 0
+    ! purpose : approximate nodes for L[n, alpha, x_i] === 0
     
-    real(wp), intent(in) :: alpha   ! validity range -1 < alpha < +1    
-    
-    integer, parameter   :: n = nGL ! LaguerreL order n here fixed to 50
-    real(wp)             :: x(n)    ! nodes = zeroes of L[n, alpha, x_i]
-  
-                                    ! linear interpolation  
+    real(wp), intent(in)   :: alpha                     ! validity range -1 < alpha < +1    
+    real(wp)               :: x(size(dataAlpha0))       ! nodes = zeroes of L[nGL, alpha, x_i]
+                                                        ! linear interpolation  
     if(alpha <= 0) then
-      x(1:n) = (1.0_wp + alpha) * dataAlpha0(1:n) - alpha * dataAlphaM1(1:n)
+      x = (1.0_wp + alpha) * dataAlpha0 - alpha * dataAlphaM1
     else
-      x(1:n) = (1.0_wp - alpha) * dataAlpha0(1:n) + alpha * dataAlphaP1(1:n)
+      x = (1.0_wp - alpha) * dataAlpha0 + alpha * dataAlphaP1
     end if
 
   end function getInitialGuessNodes
@@ -261,17 +258,13 @@ module mod_math
     
   end function setParmsWS
 
-  pure function ws( x, pWS ) result( y )
-    real(wp), intent(in) :: x(:)
+  pure elemental function ws( x, pWS ) result( y )
+    real(wp), intent(in) :: x
     type ( paramsWS ) , intent(in) :: pWS
     
-    real(wp) :: y(size(x))
-    integer :: i
-    real(wp) ::  a0m
-
-    i = size(x)
-    a0m = 1.0_wp/pWS%a0
-    y( 1:i ) =  pWS%rho0/(1.0_wp + exp(( x(1:i) - pWS%R0)*a0m))
+    real(wp) :: y
+   
+    y =  pWS%rho0/(1.0_wp + exp(( x - pWS%R0)/pWS%a0))
   end function ws
 
   pure function fdo( alpha, W, a0,  kreal, mreal,  x ) result( yreal )
