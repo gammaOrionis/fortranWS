@@ -42,14 +42,6 @@ program fractWS
   position(i) = i*step
  end do  
     
- !resultn = ws( rho0n,  R0n,  a0n, position )
- !resultp = ws( rho0p,  R0p,  a0p, position )
-   
-! write results
-
-!do i = 1, imax
-!end do   
-!1000 format (1x,f5.2, 6(1x,E14.8), 2x, 4(1x,E14.8))
 
 !  call fdo fractional damped oscillation
 !y = fdo( alpha, W, a0, k, m, position )
@@ -59,24 +51,24 @@ program fractWS
 
 !print *, getInitialGuessNodes(alpha)
 
+ 120 format (1x,2(1x,E44.33)) 
+ 130 format (1x,3(1x,E44.33)) 
+ 
+
 ! qGL contains alpha, n, nodes, weights
 qGL =  setNodesAndWeights( alpha )
-!result = integrateSin( position, qGL )
-!exact = testExactSin( position , qGL)
+result = integrateSin( position, qGL )
+exact = testExactSin( position , qGL)
   
-!print *, qGL
-!print *, sum(qGL%nodes* qGL%weights)
 do i = 1, imax
-    ! print 100, position(i), result(i), result(i)-exact(i)
+    print 130, position(i), result(i), result(i)-exact(i)
     ! write(1,100) position(i), y(i)
 end do  
-100 format (1x,3(1x,E44.33)) 
 
-
-
+! now do the job for Woods-Saxon
 result = integrateWS( position, qGL, setParmsWS(W, R0, a0) )
 do i = 1, imax
-    print 100, position(i), result(i), a0
+    print 120, position(i), result(i)
     ! write(1,100) position(i), y(i)
 end do  
 
