@@ -13,6 +13,8 @@ module mod_math
     integer                       :: dimension
     real(wp), dimension(nGL)      :: nodes  
     real(wp), dimension(nGL)      :: weights
+    real(wp), dimension(nGL)      :: expNodes
+    
   end type 
   type paramsWS
     real(wp)                      :: rho0
@@ -143,7 +145,9 @@ module mod_math
     !! get weights
     weights = getWeights(n, alpha, nodes)
 
-    qGL = quadrature(alpha, n, nodes, weights)
+    !! get exp.nodes
+    
+    qGL = quadrature(alpha, n, nodes, weights, exp(nodes))
     
   end function setNodesAndWeights
 
@@ -292,16 +296,17 @@ module mod_math
   end function fdo
 
   pure elemental function integrateWS( x , qGL, pWS) result( y )
-    type ( paramsWS )  , intent(in) :: pWS
-    type ( quadrature ), intent(in) :: qGL
-    real(wp), intent(in) :: x
+    type ( paramsWS )  , intent(in) :: pWS       ! parameters of the Woods-Saxon potential
+    type ( quadrature ), intent(in) :: qGL       ! parameters of the Gauss-Lagurre quadrature
+    real(wp), intent(in) :: x                    ! vector of input variable e.g. 0 .. 14.6
         
-    real(wp) :: y
+    real(wp) :: y                                ! vector of output
+    
     
     ! y[a_, x_] =  NIntegrate[w[h] Exp[-h] Exp[+h] f[h+x],{h,0,Infinity}]
     ! with f[x_] = ws[x]
     
-    y =  sum( qGL%weights *  ws( qGL%nodes + x , pWS) * exp(qGL%nodes))
+    y =  sum( qGL%weights *  ws( qGL%nodes + x , pWS) * qGL%expNodes)
   
   end function integrateWS
 
