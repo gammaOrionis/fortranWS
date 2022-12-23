@@ -14,6 +14,13 @@ module mod_math
     real(wp), dimension(nGL)      :: nodes  
     real(wp), dimension(nGL)      :: weights
   end type 
+  type paramsWS
+    real(wp)                      :: rho0
+    real(wp)                      :: R0
+    real(wp)                      :: a0
+  end type 
+
+ 
  
 ! Forward difference coefficients n = 50, precision up to 128
   real(wp), parameter ::  &
@@ -239,18 +246,28 @@ module mod_math
     
   end function deriv
 
+  ! 
+  pure function setParmsWS( rho0, R0, a0 ) result(pWS)
+    real(wp), intent(in) :: rho0 
+    real(wp), intent(in) :: R0
+    real(wp), intent(in) :: a0
+    type ( paramsWS ) :: pWS
+    
+    pWS = paramsWS(rho0, R0, a0)
+    
+  end function setParmsWS
 
-  pure function ws( rho0, R0, a0, x ) result( y )
+  pure function ws( x, pWS ) result( y )
     real(wp), intent(in) :: x(:)
-    real(wp), intent(in) :: rho0, R0, a0
-
+    type ( paramsWS ) , intent(in) :: pWS
+    
     real(wp) :: y(size(x))
     integer :: i
     real(wp) ::  a0m
 
     i = size(x)
-    a0m = 1.0_wp/a0
-    y( 1:i ) =  rho0/(1.0_wp + exp(( x(1:i) - R0)*a0m))
+    a0m = 1.0_wp/pWS%a0
+    y( 1:i ) =  pWS%rho0/(1.0_wp + exp(( x(1:i) - pWS%R0)*a0m))
   end function ws
 
   pure function fdo( alpha, W, a0,  kreal, mreal,  x ) result( yreal )
@@ -273,6 +290,25 @@ module mod_math
     yreal( 1:i ) =  a0**alpha * W * exp( -kreal * x(1:i) ) * real( factor * exp( m * x(1:i) ) )
 
   end function fdo
+
+  pure function integrateWS( x , qGL, pWS) result( y )
+    type ( paramsWS ) , intent(in) :: pWS
+    type ( quadrature ), intent(in) :: qGL
+    real(wp), intent(in) :: x(:)
+        
+    real(wp) :: y(size(x))
+  
+    integer :: i
+
+    ! y[a_, x_] =  NIntegrate[w[h] Exp[-h] f[h+x],{h,0,Infinity}]
+    ! with f[x_] = Sin[x]
+    
+    do concurrent (i = 1 : size(x))   ! iterate all x-positions
+      y(i) =  sum( qGL%weights * ws( qGL%nodes + x(i) , pWS))
+    end do   
+
+  end function integrateWS
+
 
 
   pure function integrateSin( x , qGL) result( y )

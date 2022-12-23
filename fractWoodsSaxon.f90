@@ -3,7 +3,8 @@ program fractWS
 
 !
  use mod_math, only: ws, fdo, setNodesAndWeights, getInitialGuessNodes, &
-                     dataFinDiffF, deriv, quadrature, integrateSin, testExactSin
+                     dataFinDiffF, deriv, quadrature, integrateSin, testExactSin, &
+                     setParmsWS, integrateWS
  implicit none
 
  integer :: i
@@ -21,6 +22,7 @@ program fractWS
  real(wp)   , parameter :: alpha = -0.95_wp
  real(wp)   , parameter :: W = 7_wp
  real(wp)   , parameter :: a0 = 0.7_wp
+ real(wp)   , parameter :: R0 = 6.8_wp
  real(wp)   , parameter :: k = 1.0_wp
  real(wp)   , parameter :: m = 2.0_wp
  
@@ -69,6 +71,12 @@ do i = 1, imax
     ! write(1,100) position(i), y(i)
 end do  
 100 format (1x,3(1x,E44.33)) 
+
+result = integrateWS( position, qGL, setParmsWS(W, R0, a0) )
+do i = 1, imax
+    print 100, position(i), result(i), result(i)-exact(i)
+    ! write(1,100) position(i), y(i)
+end do  
 
 
 !close(1) 
