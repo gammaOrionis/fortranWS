@@ -134,10 +134,10 @@ module mod_math
 
     if(qGL%alpha .eq. alpha) return
    
-    !! linear interpolation guess
+    !! linear interpolation guess -> zeroth iteration 
     nodes = getInitialGuessNodes( alpha );
     
-    !! newton raphson iteration to get node-accuracy
+    !! newton raphson iteration to get node-accuracy, imax steps
     do i = 1, imax
       nodes = iterateNodes(n, alpha, nodes)
     end do
@@ -145,7 +145,7 @@ module mod_math
     !! get weights
     weights = getWeights(n, alpha, nodes)
 
-    !! finally get expNodes and finish
+    !! finally get expNodes to compensate tempered fractional calculus and finish
     
     qGL = quadrature( alpha, n, nodes, weights, exp(nodes) )
     
@@ -305,39 +305,34 @@ module mod_math
 
 
 
-  pure function integrateSin( x , qGL) result( y )
+  pure elemental function integrateSin( x , qGL) result( y )
 
-    real(wp), intent(in) :: x(:)
+    real(wp), intent(in) :: x
     type ( quadrature ), intent(in) :: qGL
    
-    real(wp) :: y(size(x))
+    real(wp) :: y
   
-    integer :: i
-
     ! y[a_, x_] =  NIntegrate[w[h] Exp[-h] f[h+x],{h,0,Infinity}]
     ! with f[x_] = Sin[x]
     
-    do concurrent (i = 1 : size(x))   ! iterate all x-positions
-      y(i) =  sum( qGL%weights * sin( qGL%nodes + x(i) ))
-    end do   
-
+    ! iterate all x-positions
+      y =  sum( qGL%weights * sin( qGL%nodes + x ))
+    
   end function integrateSin
 
-  pure function testExactSin( x , qGL) result( y )
+  pure elemental function testExactSin( x , qGL) result( y )
 
-  real(wp), intent(in) :: x(:)
-  real(wp) :: factor
+    real(wp), intent(in) :: x
     type ( quadrature ), intent(in) :: qGL
   
-    real(wp) :: y(size(x))
+    real(wp) :: y
     
-    integer :: i
-    i = size(x)
-
+    real(wp) :: factor
+       
     ! y[a_, x_] =  Integrate[w[h] Exp[-h] f[h+x],{h,0,Infinity}]
     factor = 2._wp**(0.5_wp*(-1.0_wp - qGL%alpha)) * gamma(1.0_wp + qGL%alpha)
   
-    y(1:i) =   factor *  Cos(0.25_wp *(pi - qGL%alpha *  pi - 4* x(1:i))) 
+    y = factor * Cos(0.25_wp *( pi - qGL%alpha *  pi - 4 * x )) 
   
   end function testExactSin
   
