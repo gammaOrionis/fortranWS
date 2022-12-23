@@ -117,7 +117,8 @@ module mod_math
     72.3689, 77.1468, 82.1751, 87.4751, 93.0721, 98.9968, 105.287, &
     111.992, 119.174, 126.918, 135.344, 144.631, 155.077, 167.251, 182.620 /)
   
-  contains
+  
+    contains
   
     pure function setNodesAndWeights(alpha) result(qGL)
     ! purpose : set nodes and weights 
@@ -132,6 +133,7 @@ module mod_math
    
     type ( quadrature ) :: qGL
 
+    ! do not do the same twice
     if(qGL%alpha .eq. alpha) return
    
     !! linear interpolation guess -> zeroth iteration 
@@ -166,10 +168,8 @@ module mod_math
 
   end function getInitialGuessNodes
 
-
-
   pure  elemental  function iterateNodes( n, alpha, x ) result( x1 )
-    
+ 
     integer,  intent(in) :: n
     real(wp), intent(in) :: alpha
     real(wp), intent(in) :: x
