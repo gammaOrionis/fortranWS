@@ -54,10 +54,10 @@ program fractWS
 qGL    =  setNodesAndWeights( alpha )
 
 ! test tempered sine
-result = integrateSin( position, qGL )
+result = integrateSin( position , qGL )
 exact  = testExactSin( position , qGL)
   
-print 130, position, result, result-exact
+print 130, position, result, result - exact
     ! write(1,100) position(i), y(i)
 
 ! now do the job for Woods-Saxon
