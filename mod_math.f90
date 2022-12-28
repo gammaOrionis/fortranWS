@@ -32,7 +32,7 @@ module mod_math
  
 ! Forward difference coefficients n = 50, precision up to 128
   real(wp), parameter ::  &
-    dataFinDiffF(nGL) = (/    &
+    dataFinDiff50(nGL) = (/    &
     -4.479205338329425057560471792964769091970601823967453829658902432_wp,&
     49._wp,&
     -588._wp,&
@@ -253,7 +253,7 @@ module mod_math
     do j = 1, counter
       total = 0.0_wp
       do i = 1, nGL
-        total = total + dataFinDiffF(i) * y( j + i -1 )
+        total = total + dataFinDiff50(i) * y( j + i -1 )
       end do 
       yout(j) = total * oneOverH
     end do 
@@ -271,7 +271,7 @@ module mod_math
   res = 0.0_wp
   
   do i = 1, nGL
-    res = res + dataFinDiffF(i)*exp( ( i-1 )*h + x)
+    res = res + dataFinDiff50(i)*exp( ( i-1 )*h + x)
   end do 
   res = res / h 
   
