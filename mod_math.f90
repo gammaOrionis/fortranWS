@@ -19,6 +19,7 @@ module mod_math
     real(wp), dimension(nGL)      :: nodes  
     real(wp), dimension(nGL)      :: weights
     real(wp), dimension(nGL)      :: expNodes
+    real(wp)                      :: factor
     
   end type 
   type paramsWS
@@ -154,7 +155,7 @@ module mod_math
 
     !! finally get expNodes to compensate tempered fractional calculus and finish
     
-    qGL = quadrature( alpha, n, nodes, weights, exp(nodes) )
+    qGL = quadrature( alpha, n, nodes, weights, exp(nodes), 1.0_wp/gamma(1.0_wp + alpha) )
     
   end function setNodesAndWeights
 
@@ -331,7 +332,7 @@ end function deriv
     ! y[a_, x_] =  NIntegrate[w[h] Exp[-h] Exp[+h] f[h+x],{h,0,Infinity}]
     ! with f[x_] = ws[x]
     
-    y =  sum( qGL%weights *  ws( qGL%nodes + x , pWS) * qGL%expNodes)
+    y =  qGL%factor * sum( qGL%weights *  ws( qGL%nodes + x , pWS) * qGL%expNodes)
   
   end function integrateWS
  
