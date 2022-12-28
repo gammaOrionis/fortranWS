@@ -1,4 +1,4 @@
-module mod_math
+module mod_mathTests
 
   use, intrinsic :: iso_fortran_env, only: wp => real128
   implicit none
@@ -334,5 +334,38 @@ end function deriv
     y =  sum( qGL%weights *  ws( qGL%nodes + x , pWS) * qGL%expNodes)
   
   end function integrateWS
- 
-end module mod_math
+
+
+
+  pure elemental function integrateSin( x , qGL) result( y )
+
+    real(wp), intent(in) :: x
+    type ( quadrature ), intent(in) :: qGL
+   
+    real(wp) :: y
+  
+    ! y[a_, x_] =  NIntegrate[w[h] Exp[-h] f[h+x],{h,0,Infinity}]
+    ! with f[x_] = Sin[x]
+    
+    ! iterate all x-positions
+      y =  sum( qGL%weights * sin( qGL%nodes + x ))
+    
+  end function integrateSin
+
+  pure elemental function testExactSin( x , qGL) result( y )
+
+    real(wp), intent(in) :: x
+    type ( quadrature ), intent(in) :: qGL
+  
+    real(wp) :: y
+    
+    real(wp) :: factor
+       
+    ! y[a_, x_] =  Integrate[w[h] Exp[-h] f[h+x],{h,0,Infinity}]
+    factor = 2._wp**(0.5_wp*(-1.0_wp - qGL%alpha)) * gamma(1.0_wp + qGL%alpha)
+  
+    y = factor * Cos(0.25_wp *( pi - qGL%alpha *  pi - 4 * x )) 
+  
+  end function testExactSin
+  
+end module mod_mathTests

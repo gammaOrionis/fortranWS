@@ -3,7 +3,7 @@ program fractWS
 
 !
  use mod_math, only: ws, fdo, setNodesAndWeights, &
-                     quadrature, integrateSin, testExactSin, &
+                     quadrature, &
                      setParmsWS, integrateWS, derive50
  implicit none
 
