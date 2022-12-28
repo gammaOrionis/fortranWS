@@ -232,11 +232,16 @@ module mod_math
     real(wp), intent(in) ::  h
     integer , intent(in) ::  counter 
     real(wp), intent(in) ::  y(:)
+
     
     integer  :: i, j
     real(wp)  ::  total 
     real(wp)  ::  yout(counter) 
     real(wp)   ::  oneOverH  
+    
+    ! check for minumum size
+    if(size(y) <  counter + nGL -1) return 
+    
     oneOverH = 1.0_wp/h
     
     do j = 1, counter
@@ -244,7 +249,7 @@ module mod_math
       do i = 1, nGL
         total = total + dataFinDiffF(i) * y( j + i -1 )
       end do 
-      yout(j) = total*oneOverH
+      yout(j) = total * oneOverH
     end do 
     
   end function derive50

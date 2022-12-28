@@ -3,22 +3,21 @@ program fractWS
 
 !
  use mod_math, only: ws, fdo, setNodesAndWeights, getInitialGuessNodes, &
-                     dataFinDiffF, deriv, quadrature, integrateSin, testExactSin, &
+                     dataFinDiffF,  quadrature, integrateSin, testExactSin, &
                      setParmsWS, integrateWS, derive50
  implicit none
 
  integer :: i
 
  integer, parameter :: imax = 150
- integer, parameter :: dmax = 100
+ integer, parameter :: dmax = 70
  
- real(wp), dimension(imax) :: position
+ real(wp), dimension(imax) :: positions
 
  real(wp)   , parameter :: step = 0.1_wp
- real(wp)   , parameter :: dummy = 1.0E-11_wp
  
- 
- real(wp)   , parameter :: alpha = -0.5_wp
+ ! parameters of the fractional Woods-Saxon potential 
+ real(wp)   , parameter :: alpha = -0.95_wp
  real(wp)   , parameter :: W = 7_wp
  real(wp)   , parameter :: a0 = 0.7_wp
  real(wp)   , parameter :: R0 = 6.8_wp
@@ -37,12 +36,12 @@ program fractWS
  
 ! generate values
  do concurrent (i = 1 : imax)
-  position(i) = i*step
+  positions(i) = i*step
  end do  
     
 
 !  call fdo fractional damped oscillation
-!y = fdo( alpha, W, a0, k, m, position )
+!y = fdo( alpha, W, a0, k, m, positions )
 
 !open(1, file = 'data1.txt', status = 'old')  
 
@@ -58,15 +57,15 @@ program fractWS
 qGL    =  setNodesAndWeights( alpha )
 
 ! test tempered sine
-result = integrateSin( position , qGL )
-exact  = testExactSin( position , qGL)
+result = integrateSin( positions , qGL )
+exact  = testExactSin( positions , qGL)
   
-print 130, position, result, result - exact
-    ! write(1,100) position(i), y(i)
+print 130, positions, result, result - exact
+    ! write(1,100) positions(i), y(i)
 
 ! now do the job for Woods-Saxon
-result = integrateWS( position, qGL, setParmsWS(W, R0, a0) )
-print 120, position, result
+result = integrateWS( positions, qGL, setParmsWS(W, R0, a0) )
+print 120, positions, result
 
 res10 = derive50( step, dmax, result )
 print 110,   res10
