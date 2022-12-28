@@ -4,12 +4,13 @@ program fractWS
 !
  use mod_math, only: ws, fdo, setNodesAndWeights, getInitialGuessNodes, &
                      dataFinDiffF, deriv, quadrature, integrateSin, testExactSin, &
-                     setParmsWS, integrateWS
+                     setParmsWS, integrateWS, derive50
  implicit none
 
  integer :: i
 
- integer, parameter :: imax = 146
+ integer, parameter :: imax = 150
+ integer, parameter :: dmax = 100
  
  real(wp), dimension(imax) :: position
 
@@ -17,7 +18,7 @@ program fractWS
  real(wp)   , parameter :: dummy = 1.0E-11_wp
  
  
- real(wp)   , parameter :: alpha = -0.95_wp
+ real(wp)   , parameter :: alpha = -0.5_wp
  real(wp)   , parameter :: W = 7_wp
  real(wp)   , parameter :: a0 = 0.7_wp
  real(wp)   , parameter :: R0 = 6.8_wp
@@ -31,6 +32,8 @@ program fractWS
 
  real(wp) :: result(imax)
  real(wp) :: exact(imax)
+ 
+ real(wp) :: res10(dmax)
  
 ! generate values
  do concurrent (i = 1 : imax)
@@ -46,6 +49,7 @@ program fractWS
 
 !print *, getInitialGuessNodes(alpha)
 
+110 format (1x,1(1x,E44.33)) 
 120 format (1x,2(1x,E44.33)) 
 130 format (1x,3(1x,E44.33)) 
  
@@ -63,6 +67,9 @@ print 130, position, result, result - exact
 ! now do the job for Woods-Saxon
 result = integrateWS( position, qGL, setParmsWS(W, R0, a0) )
 print 120, position, result
+
+res10 = derive50( step, dmax, result )
+print 110,   res10
 
 !close(1) 
  

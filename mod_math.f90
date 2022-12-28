@@ -228,24 +228,46 @@ module mod_math
   end function getWeights
 
 
-  pure function deriv( x ) result( y )
-    real(wp), intent(in) :: x
+  pure  function derive50( h, counter , y ) result( yout )
+    real(wp), intent(in) ::  h
+    integer , intent(in) ::  counter 
+    real(wp), intent(in) ::  y(:)
     
-    real(wp) :: y
-    integer  :: i
-    real(wp), parameter  ::  h= 0.01_wp   ! stepsize 
-    real(wp)  ::  res 
-
-    res = 0.0_wp
+    integer  :: i, j
+    real(wp)  ::  total 
+    real(wp)  ::  yout(counter) 
+    real(wp)   ::  oneOverH  
+    oneOverH = 1.0_wp/h
     
-    do i = 1, nGL
-      res = res + dataFinDiffF(i)*exp( ( i-1 )*h + x)
+    do j = 1, counter
+      total = 0.0_wp
+      do i = 1, nGL
+        total = total + dataFinDiffF(i) * y( j + i -1 )
+      end do 
+      yout(j) = total*oneOverH
     end do 
-    res = res / h 
     
-    y = res
-    
-  end function deriv
+  end function derive50
+
+  pure function deriv( x ) result( y )
+  real(wp), intent(in) :: x
+  
+  real(wp) :: y
+  integer  :: i
+  real(wp), parameter  ::  h= 0.01_wp   ! stepsize 
+  real(wp)  ::  res 
+
+  res = 0.0_wp
+  
+  do i = 1, nGL
+    res = res + dataFinDiffF(i)*exp( ( i-1 )*h + x)
+  end do 
+  res = res / h 
+  
+  y = res
+  
+end function deriv
+
 
   ! 
   pure function setParmsWS( rho0, R0, a0 ) result(pWS)
