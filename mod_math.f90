@@ -9,6 +9,11 @@ module mod_math
   real(wp), parameter :: pi = 3.14159265358979323846264338327950288419716939937510_wp
 
   type quadrature
+    ! parameters for
+    ! extended Gauss Legendre quadrature
+    ! \int_0^\infty dh h^\alpha exp(-h) f(h) 
+    ! = \sum_1^dimension weights[i]*f(nodes[i]) 
+    ! expNodes = exp[nodes[i]] 
     real(wp)                      :: alpha
     integer                       :: dimension
     real(wp), dimension(nGL)      :: nodes  
