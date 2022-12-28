@@ -8,19 +8,19 @@ program fractWS
 
  integer :: i
 
- real(wp), parameter :: step = 0.1_wp
+ real(wp), parameter :: stepSize = 0.1_wp
  integer,  parameter :: imax = 150
  real(wp), dimension(imax) :: positions
  
- integer, parameter :: dmax = 70
+ integer, parameter :: dmax = 75
  real(wp) :: res50(dmax)
- 
- 
+  
  ! parameters of the fractional Woods-Saxon potential 
  real(wp)   , parameter :: alpha = -0.95_wp
  real(wp)   , parameter :: W = 7_wp
  real(wp)   , parameter :: a0 = 0.7_wp
  real(wp)   , parameter :: R0 = 6.8_wp
+ ! additional parameters of the fractional damped oscillations 
  real(wp)   , parameter :: k = 1.0_wp
  real(wp)   , parameter :: m = 2.0_wp
 
@@ -32,7 +32,7 @@ program fractWS
  
 ! generate values
  do concurrent (i = 1 : imax)
-  positions(i) = i*step
+  positions(i) = i*stepSize
  end do  
     
 
@@ -55,7 +55,7 @@ print 120, positions, result
 
 ! first ordinary derivative of result
 ! dmax < imax - 50
-res50 = derive50( step, dmax, result )
+res50 = derive50( stepSize, dmax, result )
 print 110,   res50
 
 !close(1) 
