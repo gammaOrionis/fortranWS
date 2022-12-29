@@ -12,8 +12,8 @@ program fractWS
  integer ,  parameter       :: imax = 150
  real(wp),  dimension(imax) :: positions
  
- integer, parameter        :: dmax = 75
- real(wp)                  :: res50(dmax)
+ integer ,  parameter       :: dmax = 75
+ real(wp)                   :: res50(dmax)
   
  ! parameters of the fractional Woods-Saxon potential 
  real(wp)   , parameter :: alpha = -0.95_wp
