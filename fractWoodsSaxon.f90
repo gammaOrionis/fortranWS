@@ -25,9 +25,9 @@ program fractWS
  real(wp)   , parameter :: m = 2.0_wp
 
  
- type (quadrature) :: qGLAlpha
+ type (quadrature)      :: qGLAlpha
 
- real(wp) :: result(imax)
+ real(wp)               :: result(imax)
  
  
 ! generate values
