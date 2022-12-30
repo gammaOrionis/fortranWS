@@ -52,7 +52,7 @@ qGLAlpha    =  setNodesAndWeights( alpha )
 ! first do the fractional integral  for Woods-Saxon
 result = integrateWS( positions, qGLAlpha, setParmsWS(W, R0, a0) )
 print 120, positions, result
-
+ 
 ! first ordinary derivative of result
 ! dmax < imax - 50
 res50 = derive50( stepSize, dmax, result )
