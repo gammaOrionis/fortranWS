@@ -3,5 +3,5 @@ gfortran -O3 -c *.f90 && gfortran *.o -o fws && ./fws
 gfortran -O3 -c *.f90 && gfortran mod_math.o fractWoodsSaxon.o -o fws
 
 ssh-keygen -t ed25519 -C "herrmann@gammaOrionis.de"
-//git clone  https://github.com/gammaOrionis/fortranWS.git
+git clone  https://github.com/gammaOrionis/fortranWS.git
 git clone git@github.com:gammaOrionis/fortranWS.git
